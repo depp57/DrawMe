@@ -2,4 +2,6 @@
 <resources>
     <dimen name="btn_main_width">250dp</dimen>
     <dimen name="text_main_size">20sp</dimen>
+    <dimen name="text_small_size">16sp</dimen>
+    <dimen name="btn_padding">5sp</dimen>
 </resources>

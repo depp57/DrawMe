@@ -1,4 +1,4 @@
-package fr.depp.drawme.ui.main;
+package fr.depp.drawme.ui;
 
 import android.os.Bundle;
 
@@ -6,17 +6,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import fr.depp.drawme.databinding.MainFragmentBinding;
+import fr.depp.drawme.databinding.FragmentMainBinding;
+import fr.depp.drawme.utils.FragmentHelper;
 
 public class MainFragment extends Fragment {
 
-    private MainFragmentBinding binding;
+    private FragmentMainBinding binding;
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -26,7 +26,7 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = MainFragmentBinding.inflate(inflater, container, false);
+        binding = FragmentMainBinding.inflate(inflater, container, false);
 
         binding.btnPlayMultiplayer.setOnClickListener((view) -> handlePlayMultiplayer());
         binding.btnPlayAi.setOnClickListener((view) -> handlePlayAi());
@@ -34,7 +34,7 @@ public class MainFragment extends Fragment {
     }
 
     private void handlePlayMultiplayer() {
-        
+        FragmentHelper.displayFragment(getParentFragmentManager(), new MultiplayerMenuFragment());
     }
 
     private void handlePlayAi() {
