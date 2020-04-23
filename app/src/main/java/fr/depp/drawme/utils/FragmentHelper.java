@@ -9,11 +9,16 @@ import fr.depp.drawme.R;
 
 public abstract class FragmentHelper {
 
-    public static void displayFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
+    public static void displayFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment, boolean withBackStack) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.container, fragment);
-        transaction.addToBackStack(null);
+
+        if (withBackStack) transaction.addToBackStack(null);
 
         transaction.commit();
+    }
+
+    public static void displayFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
+        displayFragment(fragmentManager, fragment, true);
     }
 }

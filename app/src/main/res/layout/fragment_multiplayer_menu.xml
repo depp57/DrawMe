@@ -28,7 +28,7 @@
         android:autofillHints="username"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="@string/input_server_name"
+        android:hint="@string/input_server_name"
         android:textAlignment="center"
         android:textSize="@dimen/text_main_size"
         app:layout_constraintEnd_toEndOf="parent"
