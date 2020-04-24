@@ -28,8 +28,8 @@ public class MainFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentMainBinding.inflate(inflater, container, false);
 
-        binding.btnPlayMultiplayer.setOnClickListener((view) -> onPlayMultiplayer());
-        binding.btnPlayAi.setOnClickListener((view) -> onPlayAi());
+        binding.btnPlayMultiplayer.setOnClickListener(view -> onPlayMultiplayer());
+        binding.btnPlayAi.setOnClickListener(view -> onPlayAi());
         return binding.getRoot();
     }
 

@@ -37,10 +37,16 @@ public class AuthFragment extends Fragment {
         userSubscription = new AuthViewModel().userSubject.subscribe(this::updateUi);
 
         binding = FragmentAuthBinding.inflate(inflater, container, false);
-        binding.btnCancel.setOnClickListener((view) -> onCancel());
-        binding.btnSign.setOnClickListener((view) -> onSign());
+        binding.btnCancel.setOnClickListener(view -> onCancel());
+        binding.btnSign.setOnClickListener(view -> onSign());
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroy() {
+        userSubscription.dispose();
+        super.onDestroy();
     }
 
     private void updateUi(FirebaseAuth firebaseAuth) {

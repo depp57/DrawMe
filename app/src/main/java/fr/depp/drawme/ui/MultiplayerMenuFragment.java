@@ -33,9 +33,9 @@ public class MultiplayerMenuFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentMultiplayerMenuBinding.inflate(inflater, container, false);
 
-        binding.btnCreateServer.setOnClickListener((view) -> onCreateServer());
-        binding.btnJoinServer.setOnClickListener((view) -> onJoinServer());
-        binding.btnCancel.setOnClickListener((view) -> onCancel());
+        binding.btnCreateServer.setOnClickListener(view -> onCreateServer());
+        binding.btnJoinServer.setOnClickListener(view -> onJoinServer());
+        binding.btnCancel.setOnClickListener(view -> onCancel());
         return binding.getRoot();
     }
 
