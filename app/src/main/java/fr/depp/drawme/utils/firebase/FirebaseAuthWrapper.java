@@ -1,6 +1,7 @@
 package fr.depp.drawme.utils.firebase;
 
 import android.app.Activity;
+
 import com.firebase.ui.auth.AuthUI;
 
 import java.util.Arrays;

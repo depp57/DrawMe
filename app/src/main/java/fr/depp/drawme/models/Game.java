@@ -6,10 +6,10 @@ import java.util.ArrayList;
 
 public class Game {
 
-    private static final int MAX_USERS = 4;
+    private static final int MAX_USERS = 6;
 
     @Exclude private String name;
-    private ArrayList<User> users;
+    private ArrayList<User> players;
 
     public Game() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -18,12 +18,17 @@ public class Game {
 
     public Game(String name) {
         this.name = name;
-        this.users = new ArrayList<>(MAX_USERS);
+        this.players = new ArrayList<>(MAX_USERS);
+    }
+
+    public Game(String name, ArrayList<User> players) {
+        this.name = name;
+        this.players = players;
     }
 
     public boolean addUser(User user) {
-        if (this.users.size() < 4) {
-            this.users.add(user);
+        if (this.players.size() < 4) {
+            this.players.add(user);
             return true;
         }
         return false;
@@ -37,11 +42,11 @@ public class Game {
         this.name = name;
     }
 
-    public ArrayList getUsers() {
-        return users;
+    public ArrayList<User> getPlayers() {
+        return players;
     }
 
-    public void setUsers(ArrayList users) {
-        this.users = users;
+    public void setPlayers(ArrayList players) {
+        this.players = players;
     }
 }

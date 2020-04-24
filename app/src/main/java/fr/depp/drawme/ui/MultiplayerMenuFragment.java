@@ -11,12 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import javax.annotation.Nonnull;
 
 import es.dmoral.toasty.Toasty;
 import fr.depp.drawme.databinding.FragmentMultiplayerMenuBinding;
-import fr.depp.drawme.utils.firebase.FirebaseService;
 import fr.depp.drawme.models.OnCustomEventListener;
 import fr.depp.drawme.utils.FragmentHelper;
+import fr.depp.drawme.utils.firebase.FirebaseService;
 
 public class MultiplayerMenuFragment extends Fragment {
 
@@ -43,7 +44,23 @@ public class MultiplayerMenuFragment extends Fragment {
     }
 
     private void onJoinServer() {
+        String serverName = binding.inputServerName.getText().toString();
+        if (!serverName.equals("")) {
+            FirebaseService.joinGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
+                @Override
+                public void onSuccess(String success) {
 
+                }
+
+                @Override
+                public void onFailure(@Nonnull String error) {
+                    Toasty.error(requireContext(), error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            Toasty.warning(requireContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void onCreateServer() {
@@ -56,7 +73,7 @@ public class MultiplayerMenuFragment extends Fragment {
                 }
 
                 @Override
-                public void onFailure(String error) {
+                public void onFailure(@Nonnull String error) {
                     Toasty.error(requireContext(), error, Toast.LENGTH_SHORT).show();
                 }
             });
