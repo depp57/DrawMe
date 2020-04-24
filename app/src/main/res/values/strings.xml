@@ -11,4 +11,19 @@
     <string name="createServer">Créer une partie</string>
     <string name="joinServer">Rejoindre une partie</string>
     <string name="cancel">Revenir au menu principal</string>
+
+    <!-- Auth Fragment -->
+    <string name="sign_in">Se connecter</string>
+    <string name="sign_out">Se déconnecter</string>
+    <string name="hi_username">Bonjour </string>
+    <string name="account_counter_win">🏆 Nb de parties gagnées : </string>
+    <string name="account_counter_played">🎮 Nb de parties jouées : </string>
+    <string name="account_ratio">💯 Ratio : </string>
+
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">544347569811260</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb544347569811260</string>
+
+    <!-- Errors -->
+    <string name="internet_error">"Une erreur s'est produite, vérifiez votre connexion internet"</string>
 </resources>

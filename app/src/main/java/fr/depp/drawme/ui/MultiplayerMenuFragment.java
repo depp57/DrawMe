@@ -1,7 +1,6 @@
 package fr.depp.drawme.ui;
 
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 
+import es.dmoral.toasty.Toasty;
 import fr.depp.drawme.databinding.FragmentMultiplayerMenuBinding;
-import fr.depp.drawme.models.FirebaseService;
+import fr.depp.drawme.utils.firebase.FirebaseService;
 import fr.depp.drawme.models.OnCustomEventListener;
 import fr.depp.drawme.utils.FragmentHelper;
-import fr.depp.drawme.utils.UiHelper;
 
 public class MultiplayerMenuFragment extends Fragment {
 
@@ -33,37 +32,37 @@ public class MultiplayerMenuFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentMultiplayerMenuBinding.inflate(inflater, container, false);
 
-        binding.btnCreateServer.setOnClickListener((view) -> handleCreateServer());
-        binding.btnJoinServer.setOnClickListener((view) -> handleJoinServer());
-        binding.btnCancel.setOnClickListener((view) -> handleCancel());
+        binding.btnCreateServer.setOnClickListener((view) -> onCreateServer());
+        binding.btnJoinServer.setOnClickListener((view) -> onJoinServer());
+        binding.btnCancel.setOnClickListener((view) -> onCancel());
         return binding.getRoot();
     }
 
-    private void handleCancel() {
+    private void onCancel() {
         FragmentHelper.displayFragment(getParentFragmentManager(), new MainFragment(), false);
     }
 
-    private void handleJoinServer() {
+    private void onJoinServer() {
 
     }
 
-    private void handleCreateServer() {
+    private void onCreateServer() {
         String serverName = binding.inputServerName.getText().toString();
         if (!serverName.equals("")) {
             FirebaseService.createGame(serverName.trim(), new OnCustomEventListener<String>() {
                 @Override
                 public void onSuccess(String param) {
-                    UiHelper.showToast(getContext(), "good", Toast.LENGTH_SHORT, Color.GREEN);
+                    Toasty.success(requireContext(), "good", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onFailure(String error) {
-                    UiHelper.showToast(getContext(), error, Toast.LENGTH_SHORT, Color.RED);
+                    Toasty.error(requireContext(), error, Toast.LENGTH_SHORT).show();
                 }
             });
         }
         else {
-            UiHelper.showToast(getContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT, Color.YELLOW);
+            Toasty.warning(requireContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT).show();
         }
     }
 

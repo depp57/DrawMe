@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import es.dmoral.toasty.Toasty;
 import fr.depp.drawme.databinding.FragmentMainBinding;
 import fr.depp.drawme.utils.FragmentHelper;
 
@@ -28,17 +29,17 @@ public class MainFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentMainBinding.inflate(inflater, container, false);
 
-        binding.btnPlayMultiplayer.setOnClickListener((view) -> handlePlayMultiplayer());
-        binding.btnPlayAi.setOnClickListener((view) -> handlePlayAi());
+        binding.btnPlayMultiplayer.setOnClickListener((view) -> onPlayMultiplayer());
+        binding.btnPlayAi.setOnClickListener((view) -> onPlayAi());
         return binding.getRoot();
     }
 
-    private void handlePlayMultiplayer() {
+    private void onPlayMultiplayer() {
         FragmentHelper.displayFragment(getParentFragmentManager(), new MultiplayerMenuFragment());
     }
 
-    private void handlePlayAi() {
-        Toast.makeText(getContext(), "L'IA sera bientôt implémentée !", Toast.LENGTH_SHORT).show();
+    private void onPlayAi() {
+        Toasty.info(requireContext(), "L'IA sera bientôt implémentée !", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -46,5 +47,4 @@ public class MainFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
 }

@@ -4,25 +4,24 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_color"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".ui.main.MainFragment">
+    tools:context=".ui.MainFragment">
 
     <Button
         android:id="@+id/btn_play_multiplayer"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="@dimen/btn_main_width"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
         android:text="@string/play_multiplayer"
         android:textSize="@dimen/text_main_size"
         android:layout_margin="10dp" />
 
     <Button
         android:id="@+id/btn_play_ai"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="@dimen/btn_main_width"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
         android:text="@string/play_ai"
         android:textSize="@dimen/text_main_size"
         android:layout_margin="10dp" />

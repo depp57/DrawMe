@@ -9,8 +9,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public abstract class FirebaseService {
 
     private static final String GAME_COLLECTION_NAME = "games";
-    private static final String TAG = "FirebaseService";
-
 
     private static CollectionReference getGamesReference() {
         return FirebaseFirestore.getInstance().collection(GAME_COLLECTION_NAME);
