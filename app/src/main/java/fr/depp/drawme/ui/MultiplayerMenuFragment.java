@@ -49,10 +49,10 @@ public class MultiplayerMenuFragment extends Fragment {
     private void onCreateServer() {
         String serverName = binding.inputServerName.getText().toString();
         if (!serverName.equals("")) {
-            FirebaseService.createGame(serverName.trim(), new OnCustomEventListener<String>() {
+            FirebaseService.createGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
                 @Override
                 public void onSuccess(String param) {
-                    Toasty.success(requireContext(), "good", Toast.LENGTH_SHORT).show();
+
                 }
 
                 @Override

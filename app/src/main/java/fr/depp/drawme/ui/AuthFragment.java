@@ -1,12 +1,13 @@
 package fr.depp.drawme.ui;
 
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import es.dmoral.toasty.Toasty;
 import fr.depp.drawme.R;
@@ -57,6 +60,8 @@ public class AuthFragment extends Fragment {
             isAuth = true;
             binding.accountStats.setVisibility(View.VISIBLE);
             binding.btnSign.setText(R.string.sign_out);
+
+            binding.textViewUsername.setText(getString(R.string.hi_username, user.getDisplayName()));
 
             // TODO mettre à jour les autres stats en faisant un lien FirebaseUser -> Database
         }

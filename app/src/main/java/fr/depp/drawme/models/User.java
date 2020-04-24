@@ -10,9 +10,9 @@ public class User {
         // Check https://firebase.google.com/docs/database/android/read-and-write?authuser=0#basic_write
     }
 
-    public User(String username, int score) {
+    public User(String username) {
         this.username = username;
-        this.score = score;
+        this.score = 0;
     }
 
     public String getUsername() {

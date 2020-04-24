@@ -15,7 +15,7 @@
     <!-- Auth Fragment -->
     <string name="sign_in">Se connecter</string>
     <string name="sign_out">Se déconnecter</string>
-    <string name="hi_username">Bonjour </string>
+    <string name="hi_username">Bonjour %1$s !</string>
     <string name="account_counter_win">🏆 Nb de parties gagnées : </string>
     <string name="account_counter_played">🎮 Nb de parties jouées : </string>
     <string name="account_ratio">💯 Ratio : </string>
@@ -26,4 +26,14 @@
 
     <!-- Errors -->
     <string name="internet_error">"Une erreur s'est produite, vérifiez votre connexion internet"</string>
+
+    <!-- Random usernames -->
+    <string-array name="random_usernames">
+        <item>Chuck Norris</item>
+        <item>Pablo Picasso</item>
+        <item>Vincent van Gogh</item>
+        <item>Léonard de Vinci</item>
+        <item>La Joconde</item>
+        <item>Michel-Ange</item>
+    </string-array>
 </resources>

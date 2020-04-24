@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 public interface OnCustomEventListener<T> {
 
-    public void onSuccess(@Nullable T success);
+    void onSuccess(@Nullable T success);
 
-    public void onFailure(@Nullable T error);
+    void onFailure(@Nullable T error);
 }

@@ -21,6 +21,14 @@ public class Game {
         this.users = new ArrayList<>(MAX_USERS);
     }
 
+    public boolean addUser(User user) {
+        if (this.users.size() < 4) {
+            this.users.add(user);
+            return true;
+        }
+        return false;
+    }
+
     public String getName() {
         return name;
     }
