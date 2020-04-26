@@ -43,7 +43,7 @@ public class WaitingRoomFragment extends Fragment {
         binding = FragmentWaitingRoomBinding.inflate(inflater, container, false);
 
         binding.textViewGameName.setText(getString(R.string.game_name, gameName));
-        binding.btnCancel.setOnClickListener(view -> FragmentHelper.displayPreviousFragment(requireActivity()));
+        binding.btnLeave.setOnClickListener(view -> FragmentHelper.displayPreviousFragment(requireActivity()));
 
         initRecyclerView();
         return binding.getRoot();

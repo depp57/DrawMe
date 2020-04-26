@@ -37,6 +37,10 @@ public class Game {
         return false;
     }
 
+    public boolean alreadySameUsernameInGame(String username) {
+        return this.players.stream().anyMatch(user -> user.getUsername().equals(username));
+    }
+
     @Exclude public String getName() {
         return name;
     }
@@ -51,5 +55,9 @@ public class Game {
 
     public void setPlayers(ArrayList players) {
         this.players = players;
+    }
+
+    public boolean isFull() {
+        return players.size() == MAX_USERS;
     }
 }

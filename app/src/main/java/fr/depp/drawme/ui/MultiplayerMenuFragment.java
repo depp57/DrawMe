@@ -16,7 +16,7 @@ import es.dmoral.toasty.Toasty;
 import fr.depp.drawme.databinding.FragmentMultiplayerMenuBinding;
 import fr.depp.drawme.models.OnCustomEventListener;
 import fr.depp.drawme.utils.FragmentHelper;
-import fr.depp.drawme.utils.firebase.FirebaseService;
+import fr.depp.drawme.utils.firebase.FirestoreHelper;
 
 public class MultiplayerMenuFragment extends Fragment {
 
@@ -33,14 +33,21 @@ public class MultiplayerMenuFragment extends Fragment {
 
         binding.btnCreateServer.setOnClickListener(view -> onCreateServer());
         binding.btnJoinServer.setOnClickListener(view -> onJoinServer());
-        binding.btnCancel.setOnClickListener(view -> FragmentHelper.displayPreviousFragment(requireActivity()));
+        binding.btnCancel.setOnClickListener(view -> onLeave());
         return binding.getRoot();
+    }
+
+    private void onLeave() {
+        // remove the player from the game in the database
+
+
+        FragmentHelper.displayPreviousFragment(requireActivity());
     }
 
     private void onJoinServer() {
         String serverName = binding.inputServerName.getText().toString();
         if (!serverName.equals("")) {
-            FirebaseService.joinGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
+            FirestoreHelper.joinGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
                 @Override
                 public void onSuccess(String gameName) {
                     FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(gameName), true);
@@ -60,7 +67,7 @@ public class MultiplayerMenuFragment extends Fragment {
     private void onCreateServer() {
         String serverName = binding.inputServerName.getText().toString();
         if (!serverName.equals("")) {
-            FirebaseService.createGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
+            FirestoreHelper.createGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
                 @Override
                 public void onSuccess(String gameName) {
                     FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(gameName), true);

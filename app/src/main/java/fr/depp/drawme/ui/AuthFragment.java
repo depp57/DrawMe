@@ -17,7 +17,7 @@ import fr.depp.drawme.R;
 import fr.depp.drawme.databinding.FragmentAuthBinding;
 import fr.depp.drawme.models.AuthViewModel;
 import fr.depp.drawme.utils.FragmentHelper;
-import fr.depp.drawme.utils.firebase.FirebaseAuthWrapper;
+import fr.depp.drawme.utils.firebase.FirebaseAuthHelper;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 public class AuthFragment extends Fragment {
@@ -74,7 +74,7 @@ public class AuthFragment extends Fragment {
             Toasty.success(requireContext(), "Vous êtes bien déconnecté", Toast.LENGTH_SHORT).show();
         }
         else {
-            FirebaseAuthWrapper.signIn(requireActivity());
+            FirebaseAuthHelper.signIn(requireActivity());
         }
     }
 }

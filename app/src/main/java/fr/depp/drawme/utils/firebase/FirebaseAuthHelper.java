@@ -10,9 +10,9 @@ import java.util.List;
 import fr.depp.drawme.R;
 import fr.depp.drawme.models.OnCustomEventListener;
 
-public abstract class FirebaseAuthWrapper {
+public abstract class FirebaseAuthHelper {
 
-    public static final int RC_SIGN_IN = 100;
+    private static final int RC_SIGN_IN = 100;
 
     public static void signIn(Activity activity) {
         List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -25,7 +25,7 @@ public abstract class FirebaseAuthWrapper {
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
-                        .build(), FirebaseAuthWrapper.RC_SIGN_IN);
+                        .build(), FirebaseAuthHelper.RC_SIGN_IN);
     }
 
     public static void signOut(Activity activity, OnCustomEventListener<String> callback) {

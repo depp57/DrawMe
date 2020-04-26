@@ -20,7 +20,7 @@ import fr.depp.drawme.models.Game;
 import fr.depp.drawme.models.OnCustomEventListener;
 import fr.depp.drawme.models.User;
 
-public abstract class FirebaseService {
+public abstract class FirestoreHelper {
 
     private static final String GAME_COLLECTION_NAME = "games";
 
@@ -58,23 +58,32 @@ public abstract class FirebaseService {
                     if (data.exists()) {
                         Game game = new Game(name, deserializePlayersFromFirebase(data));
 
-                        String username;
-                        // if the user is connected, pick his username, else pick a random username
-                        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-                            username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-                        else {
-                            String[] usernames = context.getResources().getStringArray(R.array.random_usernames);
-                            username = usernames[new Random().nextInt(usernames.length)];
+                        if (game.isFull()) {
+                            callback.onFailure("La partie est déjà pleine");
+                            return;
                         }
 
-                        // game.addUser return false if the game is already full
-                        if (game.addUser(new User(username))) {
-                            getGamesReference().document(name).set(game);
-                            callback.onSuccess(name);
+                        String username;
+                        // if the user is connected, pick his username, else pick a random username
+                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                            username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                            if (game.alreadySameUsernameInGame(username)) {
+                                callback.onFailure("Un joueur avec le même pseudo est déjà dans la partie");
+                                return;
+                            }
                         }
+
                         else {
-                            callback.onFailure("La partie est déjà pleine");
+                            String[] usernames = context.getResources().getStringArray(R.array.random_usernames);
+                            do {
+                                username = usernames[new Random().nextInt(usernames.length)];
+                            }
+                            while (game.alreadySameUsernameInGame(username));
                         }
+
+                        game.addUser(new User(username)) ;
+                        getGamesReference().document(name).set(game);
+                        callback.onSuccess(name);
                     }
                     else {
                         callback.onFailure("La partie n'a pas été trouvée");
@@ -89,6 +98,10 @@ public abstract class FirebaseService {
 
     public static ListenerRegistration getRegistrationForGame(String gameName, EventListener<DocumentSnapshot> listener) {
         return getGamesReference().document(gameName).addSnapshotListener(listener);
+    }
+
+    public static void removePlayer(String gameName, User player) {
+
     }
 
     // this is because "(ArrayList<HashMap<String, Object>>)players" could throws classCastException

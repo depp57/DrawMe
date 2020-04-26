@@ -8,7 +8,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 
-import fr.depp.drawme.utils.firebase.FirebaseService;
+import fr.depp.drawme.utils.firebase.FirestoreHelper;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 
 public class WaitingRoomViewModel extends ViewModel {
@@ -17,14 +17,14 @@ public class WaitingRoomViewModel extends ViewModel {
     private final ListenerRegistration registration;
 
     public WaitingRoomViewModel(String gameName) {
-        registration = FirebaseService.getRegistrationForGame(gameName, (data, e) -> {
+        registration = FirestoreHelper.getRegistrationForGame(gameName, (data, e) -> {
             if (e != null) {
                 Log.w("WaitingRoomViewModel", "Listen failed.", e);
                 return;
             }
 
             if (data != null && data.exists()) {
-                playersSubject.onNext(FirebaseService.deserializePlayersFromFirebase(data));
+                playersSubject.onNext(FirestoreHelper.deserializePlayersFromFirebase(data));
             }
             else {
                 Log.w("WaitingRoomViewModel", "No data.");
