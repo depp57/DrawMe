@@ -1,5 +1,7 @@
 package fr.depp.drawme.utils;
 
+import android.app.Activity;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -14,11 +16,17 @@ public abstract class FragmentHelper {
         transaction.replace(R.id.container, fragment);
 
         if (withBackStack) transaction.addToBackStack(null);
+        else fragmentManager.popBackStack();
 
         transaction.commit();
     }
 
     public static void displayFragment(@NonNull FragmentManager fragmentManager, @NonNull Fragment fragment) {
         displayFragment(fragmentManager, fragment, true);
+    }
+
+    public static void displayPreviousFragment(Activity activity) {
+        // simulate back button to return to the previous fragment
+        activity.onBackPressed();
     }
 }

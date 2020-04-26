@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import es.dmoral.toasty.Toasty;
@@ -22,10 +21,10 @@ public class MainFragment extends Fragment {
         return new MainFragment();
     }
 
-    @Nullable
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         binding = FragmentMainBinding.inflate(inflater, container, false);
 
         binding.btnPlayMultiplayer.setOnClickListener(view -> onPlayMultiplayer());

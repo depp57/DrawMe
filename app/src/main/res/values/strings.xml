@@ -8,8 +8,8 @@
     <!-- Multiplayer menu Fragment -->
     <string name="label_server_name">Entrez le nom de la partie :</string>
     <string name="input_server_name">Nom de la partie</string>
-    <string name="createServer">Créer une partie</string>
-    <string name="joinServer">Rejoindre une partie</string>
+    <string name="create_server">Créer une partie</string>
+    <string name="join_server">Rejoindre une partie</string>
     <string name="cancel">Revenir au menu principal</string>
 
     <!-- Auth Fragment -->
@@ -19,6 +19,12 @@
     <string name="account_counter_win">🏆 Nb de parties gagnées : </string>
     <string name="account_counter_played">🎮 Nb de parties jouées : </string>
     <string name="account_ratio">💯 Ratio : </string>
+
+    <!-- Waiting Room Fragment -->
+    <string name="exit_game">Quitter la partie</string>
+    <string name="img_account">Photo de profil</string>
+    <string name="start_game">Lancer la partie</string>
+    <string name="game_name">Partie %1$s</string>
 
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
     <string name="facebook_application_id" translatable="false">544347569811260</string>

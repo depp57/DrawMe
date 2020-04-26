@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,12 +31,12 @@ public class AuthFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         userSubscription = new AuthViewModel().userSubject.subscribe(this::updateUi);
 
         binding = FragmentAuthBinding.inflate(inflater, container, false);
-        binding.btnCancel.setOnClickListener(view -> onCancel());
+        binding.btnCancel.setOnClickListener(view -> FragmentHelper.displayPreviousFragment(requireActivity()));
         binding.btnSign.setOnClickListener(view -> onSign());
 
         return binding.getRoot();
@@ -77,9 +76,5 @@ public class AuthFragment extends Fragment {
         else {
             FirebaseAuthWrapper.signIn(requireActivity());
         }
-    }
-
-    private void onCancel() {
-        FragmentHelper.displayFragment(getParentFragmentManager(), new MainFragment(), false);
     }
 }

@@ -56,13 +56,6 @@
 
     <Button
         android:id="@+id/btn_cancel"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/cancel"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        style="@style/cancelButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

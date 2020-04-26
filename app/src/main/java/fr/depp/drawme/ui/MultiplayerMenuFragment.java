@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import javax.annotation.Nonnull;
@@ -27,20 +26,15 @@ public class MultiplayerMenuFragment extends Fragment {
         return new MultiplayerMenuFragment();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         binding = FragmentMultiplayerMenuBinding.inflate(inflater, container, false);
 
         binding.btnCreateServer.setOnClickListener(view -> onCreateServer());
         binding.btnJoinServer.setOnClickListener(view -> onJoinServer());
-        binding.btnCancel.setOnClickListener(view -> onCancel());
+        binding.btnCancel.setOnClickListener(view -> FragmentHelper.displayPreviousFragment(requireActivity()));
         return binding.getRoot();
-    }
-
-    private void onCancel() {
-        FragmentHelper.displayFragment(getParentFragmentManager(), new MainFragment(), false);
     }
 
     private void onJoinServer() {
@@ -48,18 +42,18 @@ public class MultiplayerMenuFragment extends Fragment {
         if (!serverName.equals("")) {
             FirebaseService.joinGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
                 @Override
-                public void onSuccess(String success) {
-
+                public void onSuccess(String gameName) {
+                    FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(gameName), true);
                 }
 
                 @Override
                 public void onFailure(@Nonnull String error) {
-                    Toasty.error(requireContext(), error, Toast.LENGTH_SHORT).show();
+                    Toasty.info(requireContext(), error, Toast.LENGTH_SHORT).show();
                 }
             });
         }
         else {
-            Toasty.warning(requireContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT).show();
+            Toasty.info(requireContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -68,8 +62,8 @@ public class MultiplayerMenuFragment extends Fragment {
         if (!serverName.equals("")) {
             FirebaseService.createGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
                 @Override
-                public void onSuccess(String param) {
-
+                public void onSuccess(String gameName) {
+                    FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(gameName), true);
                 }
 
                 @Override
@@ -79,7 +73,7 @@ public class MultiplayerMenuFragment extends Fragment {
             });
         }
         else {
-            Toasty.warning(requireContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT).show();
+            Toasty.info(requireContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT).show();
         }
     }
 

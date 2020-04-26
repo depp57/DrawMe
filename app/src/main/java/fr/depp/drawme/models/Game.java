@@ -1,12 +1,15 @@
 package fr.depp.drawme.models;
 
+
 import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Game {
 
     private static final int MAX_USERS = 6;
+    private static final String TAG = "Game";
 
     @Exclude private String name;
     private ArrayList<User> players;
@@ -27,18 +30,18 @@ public class Game {
     }
 
     public boolean addUser(User user) {
-        if (this.players.size() < 4) {
+        if (this.players.size() < MAX_USERS) {
             this.players.add(user);
             return true;
         }
         return false;
     }
 
-    public String getName() {
+    @Exclude public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    @Exclude public void setName(String name) {
         this.name = name;
     }
 
