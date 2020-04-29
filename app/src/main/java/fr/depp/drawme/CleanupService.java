@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-
 import fr.depp.drawme.utils.firebase.FirestoreHelper;
 
 
@@ -33,5 +32,6 @@ public class CleanupService extends Service {
         if (gameName != null) {
             FirestoreHelper.removePlayer(gameName, playerName);
         }
+        stopSelf();
     }
 }

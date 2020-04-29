@@ -3,7 +3,6 @@ package fr.depp.drawme.ui.viewHolder;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import fr.depp.drawme.databinding.WaitingRoomItemBinding;
 import fr.depp.drawme.models.User;
 

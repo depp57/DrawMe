@@ -27,7 +27,7 @@ public abstract class FirestoreHelper {
 
     private static final String GAME_COLLECTION_NAME = "games";
 
-    public static CollectionReference getGamesReference() {
+    private static CollectionReference getGamesReference() {
         return FirebaseFirestore.getInstance().collection(GAME_COLLECTION_NAME);
     }
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import fr.depp.drawme.utils.firebase.FirestoreHelper;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -27,14 +26,7 @@ public class WaitingRoomViewModel extends ViewModel {
             }
 
             if (data != null && data.exists()) {
-                // Auto delete the game in the database if its empty
-                Object players = data.get("players");
-                if (players != null && ((Map)players).isEmpty()) {
-                    FirestoreHelper.getGamesReference().document(gameName).delete();
-                }
-                else {
-                    playersSubject.onNext(FirestoreHelper.deserializePlayersFromFirebaseToList(data));
-                }
+                playersSubject.onNext(FirestoreHelper.deserializePlayersFromFirebaseToList(data));
             }
         });
     }
