@@ -58,16 +58,27 @@ public class MultiplayerMenuFragment extends Fragment {
     }
 
     private void onCreateServer() {
-        String serverName = binding.inputServerName.getText().toString();
+        String serverName = binding.inputServerName.getText().toString().trim();
         if (!serverName.equals("")) {
-            FirestoreHelper.createGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
+            binding.progressBar.setVisibility(View.VISIBLE);
+
+            FirestoreHelper.createGame(getContext(), serverName, new OnCustomEventListener<String>() {
                 @Override
                 public void onSuccess(String playerName) {
-                    FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(serverName.trim(), playerName), true);
+                    // if the user switch to another fragment before the game was created cancel the action
+                    if (!isVisible()) {
+                        FirestoreHelper.removePlayer(serverName, playerName);
+                        return;
+                    }
+
+                    FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(serverName, playerName), true);
                 }
 
                 @Override
                 public void onFailure(@Nonnull String error) {
+                    if (!isVisible()) return;
+
+                    binding.progressBar.setVisibility(View.GONE);
                     Toasty.error(requireContext(), error, Toast.LENGTH_SHORT).show();
                 }
             });
