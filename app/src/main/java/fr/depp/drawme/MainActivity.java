@@ -22,8 +22,6 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.container, MainFragment.newInstance())
                     .commitNow();
         }
-
-        startService(new Intent(getBaseContext(), CleanupService.class));
     }
 
     @Override

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import fr.depp.drawme.databinding.WaitingRoomItemBinding;
 import fr.depp.drawme.ui.viewHolder.WaitingRoomViewHolder;
@@ -15,14 +16,14 @@ import io.reactivex.rxjava3.disposables.Disposable;
 public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomViewHolder> {
 
     private Disposable usersSubscription;
-    private ArrayList<User> users;
+    private List<User> users;
 
     public WaitingRoomAdapter(WaitingRoomViewModel viewModel) {
         users = new ArrayList<>(6);
         usersSubscription = viewModel.playersSubject.subscribe(this::updateData);
     }
 
-    private void updateData(ArrayList<User> users) {
+    private void updateData(List<User> users) {
         this.users = users;
         notifyDataSetChanged(); // TODO https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter#notifydatasetchanged
     }

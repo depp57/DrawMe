@@ -26,6 +26,7 @@ import fr.depp.drawme.models.User;
 public abstract class FirestoreHelper {
 
     private static final String GAME_COLLECTION_NAME = "games";
+    private static final String FAILURE_ERROR_MSG = "Vérifiez votre connexion internet";
 
     private static CollectionReference getGamesReference() {
         return FirebaseFirestore.getInstance().collection(GAME_COLLECTION_NAME);
@@ -52,7 +53,7 @@ public abstract class FirestoreHelper {
                     callback.onFailure("Une partie du même nom existe déjà");
                 }
             })
-            .addOnFailureListener((error) -> callback.onFailure("Vérifiez votre connexion internet"));
+            .addOnFailureListener(error -> callback.onFailure(FAILURE_ERROR_MSG));
     }
 
     public static void joinGame(Context context, String name, OnCustomEventListener<String> callback) {
@@ -92,7 +93,7 @@ public abstract class FirestoreHelper {
                         callback.onFailure("La partie n'a pas été trouvée");
                     }
                 })
-                .addOnFailureListener((error) -> callback.onFailure("Vérifiez votre connexion internet"));
+                .addOnFailureListener(error -> callback.onFailure(FAILURE_ERROR_MSG));
     }
 
     private static Task<DocumentSnapshot> getGame(String name) {
@@ -125,7 +126,7 @@ public abstract class FirestoreHelper {
         }
         catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Error during deserialization, see FirebaseService -> deserializePlayersFromFirebase()"
+            throw new RuntimeException("Error during deserialization, see FirebaseHelper -> deserializePlayersFromFirebase()"
             + e.getMessage());
         }
     }
@@ -146,8 +147,24 @@ public abstract class FirestoreHelper {
             }
         }
         catch (Exception e) {
-            throw new RuntimeException("Error during deserialization, see FirebaseService -> deserializePlayersFromFirebaseToList()"
+            throw new RuntimeException("Error during deserialization, see FirebaseHelper -> deserializePlayersFromFirebaseToList()"
                     + e.getMessage());
         }
+    }
+
+    public static void startGame(String gameName, OnCustomEventListener<String> callback) {
+        getGame(gameName)
+                .addOnSuccessListener(data -> {
+                    if (data.exists()) {
+                        getGamesReference().document(gameName)
+                                .update("started", true)
+                                .addOnSuccessListener(success -> callback.onSuccess(null));
+                    }
+                    else {
+                        // La partie devrait exister
+                        callback.onFailure("Erreur interne, signalez le svp : FireHelper -> startGame()");
+                    }
+                })
+                .addOnFailureListener(error -> callback.onFailure(FAILURE_ERROR_MSG));
     }
 }

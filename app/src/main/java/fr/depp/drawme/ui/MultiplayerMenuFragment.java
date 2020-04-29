@@ -62,7 +62,7 @@ public class MultiplayerMenuFragment extends Fragment {
                     Toasty.info(requireContext(), error, Toast.LENGTH_SHORT).show();
                 }
             };
-            
+
             if (create_or_join.equals("create")) FirestoreHelper.createGame(getContext(), serverName, callback);
             else FirestoreHelper.joinGame(getContext(), serverName, callback);
         }

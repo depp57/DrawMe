@@ -4,15 +4,18 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.firestore.ListenerRegistration;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import fr.depp.drawme.utils.firebase.FirestoreHelper;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 
 public class WaitingRoomViewModel extends ViewModel {
 
-    final PublishSubject<ArrayList<User>> playersSubject = PublishSubject.create();
-    private final ListenerRegistration registration;
+    final PublishSubject<List<User>> playersSubject = PublishSubject.create();
+    private final PublishSubject<Boolean> hasGameStartedSubject = PublishSubject.create();
+    private final ListenerRegistration playerRegistration;
+
+    private List<User> cachedPlayers;
     private final String gameName;
     private final String playerName;
 
@@ -20,20 +23,29 @@ public class WaitingRoomViewModel extends ViewModel {
         this.gameName = gameName;
         this.playerName = playerName;
 
-        registration = FirestoreHelper.listenerForGameChange(gameName, (data, e) -> {
+        playerRegistration = FirestoreHelper.listenerForGameChange(gameName, (data, e) -> {
             if (e != null) {
                 return;
             }
 
             if (data != null && data.exists()) {
-                playersSubject.onNext(FirestoreHelper.deserializePlayersFromFirebaseToList(data));
+                if (data.get("started") != null) {
+                    hasGameStartedSubject.onNext(true);
+                }
+
+                cachedPlayers = FirestoreHelper.deserializePlayersFromFirebaseToList(data);
+                playersSubject.onNext(cachedPlayers);
             }
         });
     }
 
+    public boolean isGameCreator() {
+        return cachedPlayers.get(cachedPlayers.size() - 1).getUsername().equals(playerName);
+    }
+
     @Override
     protected void onCleared() {
-        registration.remove();
+        playerRegistration.remove();
         super.onCleared();
     }
 
@@ -43,5 +55,9 @@ public class WaitingRoomViewModel extends ViewModel {
 
     public String getPlayerName() {
         return playerName;
+    }
+
+    public PublishSubject<Boolean> getHasGameStartedSubject() {
+        return hasGameStartedSubject;
     }
 }
