@@ -6,13 +6,16 @@ import android.content.Context;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import fr.depp.drawme.R;
@@ -24,7 +27,7 @@ public abstract class FirestoreHelper {
 
     private static final String GAME_COLLECTION_NAME = "games";
 
-    private static CollectionReference getGamesReference() {
+    public static CollectionReference getGamesReference() {
         return FirebaseFirestore.getInstance().collection(GAME_COLLECTION_NAME);
     }
 
@@ -43,7 +46,7 @@ public abstract class FirestoreHelper {
                     }
 
                     game.addUser(new User(username));
-                    getGamesReference().document(name).set(game).addOnSuccessListener(command -> callback.onSuccess(name));
+                    getGamesReference().document(name).set(game).addOnSuccessListener(command -> callback.onSuccess(username));
                 }
                 else {
                     callback.onFailure("Une partie du même nom existe déjà");
@@ -56,7 +59,7 @@ public abstract class FirestoreHelper {
         getGame(name)
                 .addOnSuccessListener(data -> {
                     if (data.exists()) {
-                        Game game = new Game(name, deserializePlayersFromFirebase(data));
+                        Game game = new Game(name, deserializePlayersFromFirebaseToMap(data));
 
                         if (game.isFull()) {
                             callback.onFailure("La partie est déjà pleine");
@@ -83,7 +86,7 @@ public abstract class FirestoreHelper {
 
                         game.addUser(new User(username)) ;
                         getGamesReference().document(name).set(game);
-                        callback.onSuccess(name);
+                        callback.onSuccess(username);
                     }
                     else {
                         callback.onFailure("La partie n'a pas été trouvée");
@@ -96,38 +99,55 @@ public abstract class FirestoreHelper {
         return getGamesReference().document(name).get();
     }
 
-    public static ListenerRegistration getRegistrationForGame(String gameName, EventListener<DocumentSnapshot> listener) {
+    public static ListenerRegistration listenerForGameChange(String gameName, EventListener<DocumentSnapshot> listener) {
         return getGamesReference().document(gameName).addSnapshotListener(listener);
     }
 
-    public static void removePlayer(String gameName, User player) {
-
+    public static void removePlayer(String gameName, String playerName) {
+        DocumentReference docRef = getGamesReference().document(gameName);
+        docRef.update("players." + playerName, FieldValue.delete());
     }
 
-    // this is because "(ArrayList<HashMap<String, Object>>)players" could throws classCastException
-    // I can't handle it by a nice way because the method DocumentSnapshot.toObject isn't currently working (24 April 2020)
-    @SuppressWarnings("unchecked")
-    public static ArrayList<User> deserializePlayersFromFirebase(DocumentSnapshot data) {
+    private static HashMap<String, Integer> deserializePlayersFromFirebaseToMap(DocumentSnapshot data) {
         try {
-            Object players = data.get("players");
+            //noinspection unchecked I can't do it by a nice way, because Documentsnapshot.toObject isn't working (27/04/2020)
+            Map<String, Long> players = (Map<String, Long>)data.get("players");
             if (players != null) {
-                ArrayList<HashMap<String, Object>> map = (ArrayList<HashMap<String, Object>>)players;
-                ArrayList<User> listPlayers = new ArrayList<>();
+                HashMap<String, Integer> mapPlayers = new HashMap<>(6);
 
-                map.forEach(user -> {
-                    String username = (String) user.get("username");
-                    listPlayers.add(new User(username));
-                });
+                players.forEach((username, score) -> mapPlayers.put(username, score.intValue()));
 
-                return listPlayers;
+                return mapPlayers;
             }
             else {
                 throw new Exception("La partie ne devrait pas être vide");
             }
         }
         catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Error during deserialization, see FirebaseService -> deserializePlayersFromFirebase()"
             + e.getMessage());
+        }
+    }
+
+    public static ArrayList<User> deserializePlayersFromFirebaseToList(DocumentSnapshot data) {
+        try {
+            //noinspection unchecked I can't do it by a nice way, because Documentsnapshot.toObject isn't working (27/04/2020)
+            Map<String, Object> players = (Map<String, Object>)data.get("players");
+            if (players != null) {
+                ArrayList<User> listUsers = new ArrayList<>(6);
+
+                players.forEach((username, score) -> listUsers.add(new User(username)));
+
+                return listUsers;
+            }
+            else {
+                throw new Exception("La partie ne devrait pas être vide");
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Error during deserialization, see FirebaseService -> deserializePlayersFromFirebaseToList()"
+                    + e.getMessage());
         }
     }
 }

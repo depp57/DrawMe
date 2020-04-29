@@ -26,6 +26,10 @@
             </intent-filter>
         </activity>
 
+        <service android:name="CleanupService"
+            android:exported="false"
+            android:stopWithTask="false"/>
+
     </application>
 
 </manifest>

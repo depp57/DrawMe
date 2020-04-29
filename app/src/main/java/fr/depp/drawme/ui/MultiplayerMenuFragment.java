@@ -33,15 +33,8 @@ public class MultiplayerMenuFragment extends Fragment {
 
         binding.btnCreateServer.setOnClickListener(view -> onCreateServer());
         binding.btnJoinServer.setOnClickListener(view -> onJoinServer());
-        binding.btnCancel.setOnClickListener(view -> onLeave());
+        binding.btnCancel.setOnClickListener(view -> FragmentHelper.displayPreviousFragment(requireActivity()));
         return binding.getRoot();
-    }
-
-    private void onLeave() {
-        // remove the player from the game in the database
-
-
-        FragmentHelper.displayPreviousFragment(requireActivity());
     }
 
     private void onJoinServer() {
@@ -49,8 +42,8 @@ public class MultiplayerMenuFragment extends Fragment {
         if (!serverName.equals("")) {
             FirestoreHelper.joinGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
                 @Override
-                public void onSuccess(String gameName) {
-                    FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(gameName), true);
+                public void onSuccess(String playerName) {
+                    FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(serverName.trim(), playerName), true);
                 }
 
                 @Override
@@ -69,8 +62,8 @@ public class MultiplayerMenuFragment extends Fragment {
         if (!serverName.equals("")) {
             FirestoreHelper.createGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
                 @Override
-                public void onSuccess(String gameName) {
-                    FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(gameName), true);
+                public void onSuccess(String playerName) {
+                    FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(serverName.trim(), playerName), true);
                 }
 
                 @Override

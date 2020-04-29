@@ -3,16 +3,14 @@ package fr.depp.drawme.models;
 
 import com.google.firebase.firestore.Exclude;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Game {
 
     private static final int MAX_USERS = 6;
-    private static final String TAG = "Game";
 
     @Exclude private String name;
-    private ArrayList<User> players;
+    private HashMap<String, Integer> players;
 
     public Game() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -21,24 +19,24 @@ public class Game {
 
     public Game(String name) {
         this.name = name;
-        this.players = new ArrayList<>(MAX_USERS);
+        this.players = new HashMap<>(MAX_USERS);
     }
 
-    public Game(String name, ArrayList<User> players) {
+    public Game(String name, HashMap<String, Integer> players) {
         this.name = name;
         this.players = players;
     }
 
     public boolean addUser(User user) {
         if (this.players.size() < MAX_USERS) {
-            this.players.add(user);
+            this.players.put(user.getUsername(), user.getScore());
             return true;
         }
         return false;
     }
 
     public boolean alreadySameUsernameInGame(String username) {
-        return this.players.stream().anyMatch(user -> user.getUsername().equals(username));
+        return this.players.containsKey(username);
     }
 
     @Exclude public String getName() {
@@ -49,15 +47,15 @@ public class Game {
         this.name = name;
     }
 
-    public ArrayList<User> getPlayers() {
+    public HashMap<String, Integer> getPlayers() {
         return players;
     }
 
-    public void setPlayers(ArrayList players) {
+    public void setPlayers(HashMap<String, Integer> players) {
         this.players = players;
     }
 
-    public boolean isFull() {
+    @Exclude public boolean isFull() {
         return players.size() == MAX_USERS;
     }
 }

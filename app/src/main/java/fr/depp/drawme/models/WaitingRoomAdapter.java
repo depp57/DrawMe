@@ -14,7 +14,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 
 public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomViewHolder> {
 
-    private static final String TAG = "WaitingRoomAdapter";
     private Disposable usersSubscription;
     private ArrayList<User> users;
 
