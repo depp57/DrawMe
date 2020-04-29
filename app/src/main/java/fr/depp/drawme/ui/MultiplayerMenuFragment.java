@@ -31,41 +31,21 @@ public class MultiplayerMenuFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentMultiplayerMenuBinding.inflate(inflater, container, false);
 
-        binding.btnCreateServer.setOnClickListener(view -> onCreateServer());
-        binding.btnJoinServer.setOnClickListener(view -> onJoinServer());
+        binding.btnCreateServer.setOnClickListener(view -> onServer("create"));
+        binding.btnJoinServer.setOnClickListener(view -> onServer("join"));
         binding.btnCancel.setOnClickListener(view -> FragmentHelper.displayPreviousFragment(requireActivity()));
         return binding.getRoot();
     }
 
-    private void onJoinServer() {
-        String serverName = binding.inputServerName.getText().toString();
-        if (!serverName.equals("")) {
-            FirestoreHelper.joinGame(getContext(), serverName.trim(), new OnCustomEventListener<String>() {
-                @Override
-                public void onSuccess(String playerName) {
-                    FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(serverName.trim(), playerName), true);
-                }
-
-                @Override
-                public void onFailure(@Nonnull String error) {
-                    Toasty.info(requireContext(), error, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        else {
-            Toasty.info(requireContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void onCreateServer() {
+    private void onServer(String create_or_join) {
         String serverName = binding.inputServerName.getText().toString().trim();
         if (!serverName.equals("")) {
             binding.progressBar.setVisibility(View.VISIBLE);
 
-            FirestoreHelper.createGame(getContext(), serverName, new OnCustomEventListener<String>() {
+            OnCustomEventListener<String> callback = new OnCustomEventListener<String>() {
                 @Override
                 public void onSuccess(String playerName) {
-                    // if the user switch to another fragment before the game was created cancel the action
+                    // if the user switch to another fragment before the game was created/joined cancel the action
                     if (!isVisible()) {
                         FirestoreHelper.removePlayer(serverName, playerName);
                         return;
@@ -79,9 +59,12 @@ public class MultiplayerMenuFragment extends Fragment {
                     if (!isVisible()) return;
 
                     binding.progressBar.setVisibility(View.GONE);
-                    Toasty.error(requireContext(), error, Toast.LENGTH_SHORT).show();
+                    Toasty.info(requireContext(), error, Toast.LENGTH_SHORT).show();
                 }
-            });
+            };
+            
+            if (create_or_join.equals("create")) FirestoreHelper.createGame(getContext(), serverName, callback);
+            else FirestoreHelper.joinGame(getContext(), serverName, callback);
         }
         else {
             Toasty.info(requireContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT).show();
