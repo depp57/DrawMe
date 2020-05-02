@@ -17,14 +17,15 @@
         android:id="@+id/drawingCanvas"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.7"/>
+        android:layout_weight="0.7"
+        android:background="@drawable/border" />
 
     <fr.depp.drawme.ui.customViews.ColorPicker
         android:id="@+id/colorPicker"
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.2"/>
+        android:layout_weight="0.2" />
 
     <EditText
         android:layout_width="match_parent"
