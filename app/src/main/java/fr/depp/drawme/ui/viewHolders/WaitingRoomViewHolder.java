@@ -1,4 +1,4 @@
-package fr.depp.drawme.ui.viewHolder;
+package fr.depp.drawme.ui.viewHolders;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;

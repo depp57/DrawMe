@@ -1,4 +1,4 @@
-package fr.depp.drawme.ui;
+package fr.depp.drawme.ui.fragments;
 
 
 import android.os.Bundle;

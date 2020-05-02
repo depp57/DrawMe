@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.depp.drawme.databinding.WaitingRoomItemBinding;
-import fr.depp.drawme.ui.viewHolder.WaitingRoomViewHolder;
+import fr.depp.drawme.ui.viewHolders.WaitingRoomViewHolder;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomViewHolder> {

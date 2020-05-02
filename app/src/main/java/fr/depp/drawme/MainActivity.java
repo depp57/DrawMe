@@ -1,14 +1,13 @@
 package fr.depp.drawme;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import fr.depp.drawme.ui.AuthFragment;
-import fr.depp.drawme.ui.MainFragment;
+import fr.depp.drawme.ui.fragments.AuthFragment;
+import fr.depp.drawme.ui.fragments.MainFragment;
 import fr.depp.drawme.utils.FragmentHelper;
 
 public class MainActivity extends AppCompatActivity {

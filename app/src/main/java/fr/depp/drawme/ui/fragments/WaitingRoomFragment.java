@@ -1,9 +1,11 @@
-package fr.depp.drawme.ui;
+package fr.depp.drawme.ui.fragments;
 
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -45,6 +47,7 @@ public class WaitingRoomFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true); // without this line, onCreateOptionsMenu() isn't called
 
         Bundle args = requireArguments();
         String gameName = args.getString("gameName");
@@ -56,6 +59,12 @@ public class WaitingRoomFragment extends Fragment {
 
         viewModel = new WaitingRoomViewModel(gameName, playerName);
         hasGameStartedSubscription = viewModel.getHasGameStartedSubject().subscribe(b -> startGame());
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.findItem(R.id.action_account).setVisible(false);
     }
 
     @Override
@@ -90,6 +99,7 @@ public class WaitingRoomFragment extends Fragment {
 
     private void startGame() {
         Toasty.success(requireContext(), "La partie commence !").show();
+        FragmentHelper.displayFragment(getParentFragmentManager(), GameFragment.newInstance());
     }
 
     private void initRecyclerView() {

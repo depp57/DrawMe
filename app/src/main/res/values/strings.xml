@@ -29,6 +29,9 @@
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
     <string name="facebook_application_id" translatable="false">544347569811260</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb544347569811260</string>
+    
+    <!-- Game Fragment -->
+    <string name="input_guessed_word">Que représente le dessin ?</string>
 
     <!-- Errors -->
     <string name="internet_error">"Une erreur s'est produite, vérifiez votre connexion internet"</string>
@@ -42,4 +45,7 @@
         <item>La Joconde</item>
         <item>Michel-Ange</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

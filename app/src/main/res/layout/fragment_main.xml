@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".ui.MainFragment">
+    tools:context=".ui.fragments.MainFragment">
 
     <Button
         android:id="@+id/btn_play_multiplayer"
