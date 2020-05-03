@@ -22,43 +22,27 @@ import es.dmoral.toasty.Toasty;
 import fr.depp.drawme.CleanupService;
 import fr.depp.drawme.R;
 import fr.depp.drawme.databinding.FragmentWaitingRoomBinding;
+import fr.depp.drawme.models.Game;
 import fr.depp.drawme.models.OnCustomEventListener;
 import fr.depp.drawme.models.WaitingRoomAdapter;
-import fr.depp.drawme.models.WaitingRoomViewModel;
 import fr.depp.drawme.utils.FragmentHelper;
-import fr.depp.drawme.utils.firebase.FirestoreHelper;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 public class WaitingRoomFragment extends Fragment {
 
     private FragmentWaitingRoomBinding binding;
-    private WaitingRoomViewModel viewModel;
     private Disposable hasGameStartedSubscription;
-
-    static WaitingRoomFragment newInstance(String gameName, String playerName) {
-        WaitingRoomFragment fragment = new WaitingRoomFragment();
-        Bundle args = new Bundle(1);
-        args.putString("gameName", gameName);
-        args.putString("playerName", playerName);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true); // without this line, onCreateOptionsMenu() isn't called
 
-        Bundle args = requireArguments();
-        String gameName = args.getString("gameName");
-        String playerName = args.getString("playerName");
-
         Intent intent = new Intent(requireActivity(), CleanupService.class);
-        intent.putExtras(args);
         requireActivity().startService(intent);
 
-        viewModel = new WaitingRoomViewModel(gameName, playerName);
-        hasGameStartedSubscription = viewModel.getHasGameStartedSubject().subscribe(b -> startGame());
+        Game game = Game.getInstance();
+        hasGameStartedSubscription = game.hasGameStartedSubject.subscribe(b -> startGame());
     }
 
     @Override
@@ -72,7 +56,7 @@ public class WaitingRoomFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentWaitingRoomBinding.inflate(inflater, container, false);
 
-        binding.textViewGameName.setText(getString(R.string.game_name, viewModel.getGameName()));
+        binding.textViewGameName.setText(getString(R.string.game_name, Game.getInstance().getName()));
         binding.btnLeave.setOnClickListener(view -> FragmentHelper.displayPreviousFragment(requireActivity()));
         binding.btnStartGame.setOnClickListener(view -> onStartGame());
 
@@ -81,8 +65,9 @@ public class WaitingRoomFragment extends Fragment {
     }
 
     private void onStartGame() {
-        if (viewModel.isGameCreator()) {
-            FirestoreHelper.startGame(viewModel.getGameName(), new OnCustomEventListener<String>() {
+        Game game = Game.getInstance();
+        if (game.isAdmin()) {
+            Game.getInstance().startGame(game.getLocalPlayerName(), new OnCustomEventListener<String>() {
                 @Override
                 public void onSuccess(@javax.annotation.Nullable String success) {}
 
@@ -99,7 +84,7 @@ public class WaitingRoomFragment extends Fragment {
 
     private void startGame() {
         Toasty.success(requireContext(), "La partie commence !").show();
-        FragmentHelper.displayFragment(getParentFragmentManager(), GameFragment.newInstance());
+        FragmentHelper.displayFragment(getParentFragmentManager(), new GameFragment());
     }
 
     private void initRecyclerView() {
@@ -108,13 +93,13 @@ public class WaitingRoomFragment extends Fragment {
         listPlayers.setHasFixedSize(true);
 
         listPlayers.setLayoutManager(new LinearLayoutManager(requireContext()));
-        listPlayers.setAdapter(new WaitingRoomAdapter(viewModel));
+        listPlayers.setAdapter(new WaitingRoomAdapter());
     }
 
     @Override
     public void onDestroy() {
         // remove the player from the game in the database
-        FirestoreHelper.removePlayer(viewModel.getGameName(), viewModel.getPlayerName());
+        Game.getInstance().removeLocalPlayer();
 
         hasGameStartedSubscription.dispose();
         super.onDestroy();

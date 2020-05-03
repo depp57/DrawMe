@@ -14,17 +14,13 @@ import javax.annotation.Nonnull;
 
 import es.dmoral.toasty.Toasty;
 import fr.depp.drawme.databinding.FragmentMultiplayerMenuBinding;
+import fr.depp.drawme.models.Game;
 import fr.depp.drawme.models.OnCustomEventListener;
 import fr.depp.drawme.utils.FragmentHelper;
-import fr.depp.drawme.utils.firebase.FirestoreHelper;
 
 public class MultiplayerMenuFragment extends Fragment {
 
     private FragmentMultiplayerMenuBinding binding;
-
-    public static MultiplayerMenuFragment newInstance() {
-        return new MultiplayerMenuFragment();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -38,8 +34,9 @@ public class MultiplayerMenuFragment extends Fragment {
     }
 
     private void onServer(String create_or_join) {
-        String serverName = binding.inputServerName.getText().toString().trim();
-        if (!serverName.equals("")) {
+        String gameName = binding.inputServerName.getText().toString().trim();
+        if (!gameName.equals("")) {
+            Game game = Game.getInstance();
             binding.progressBar.setVisibility(View.VISIBLE);
 
             OnCustomEventListener<String> callback = new OnCustomEventListener<String>() {
@@ -47,11 +44,11 @@ public class MultiplayerMenuFragment extends Fragment {
                 public void onSuccess(String playerName) {
                     // if the user switch to another fragment before the game was created/joined cancel the action
                     if (!isVisible()) {
-                        FirestoreHelper.removePlayer(serverName, playerName);
+                        game.removePlayer(playerName);
                         return;
                     }
 
-                    FragmentHelper.displayFragment(getParentFragmentManager(), WaitingRoomFragment.newInstance(serverName, playerName), true);
+                    FragmentHelper.displayFragment(getParentFragmentManager(), new WaitingRoomFragment(), true);
                 }
 
                 @Override
@@ -63,8 +60,8 @@ public class MultiplayerMenuFragment extends Fragment {
                 }
             };
 
-            if (create_or_join.equals("create")) FirestoreHelper.createGame(getContext(), serverName, callback);
-            else FirestoreHelper.joinGame(getContext(), serverName, callback);
+            if (create_or_join.equals("create")) game.createGame(getContext(), gameName, callback);
+            else game.joinGame(getContext(), gameName, callback);
         }
         else {
             Toasty.info(requireContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT).show();

@@ -13,15 +13,10 @@ import androidx.fragment.app.Fragment;
 
 import fr.depp.drawme.R;
 import fr.depp.drawme.databinding.FragmentGameBinding;
-import fr.depp.drawme.ui.customViews.ColorPicker;
 
 public class GameFragment extends Fragment {
 
     private FragmentGameBinding binding;
-
-    static GameFragment newInstance() {
-        return new GameFragment();
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

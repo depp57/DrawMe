@@ -4,12 +4,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import fr.depp.drawme.utils.firebase.FirestoreHelper;
+import fr.depp.drawme.models.Game;
 
 
 public class CleanupService extends Service {
-
-    private String gameName, playerName;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -18,20 +16,12 @@ public class CleanupService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String gameName = intent.getStringExtra("gameName");
-        if (gameName != null) {
-            this.gameName = gameName;
-            this.playerName = intent.getStringExtra("playerName");
-        }
-
         return START_NOT_STICKY;
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        if (gameName != null) {
-            FirestoreHelper.removePlayer(gameName, playerName);
-        }
+        Game.getInstance().removeLocalPlayer();
         stopSelf();
     }
 }

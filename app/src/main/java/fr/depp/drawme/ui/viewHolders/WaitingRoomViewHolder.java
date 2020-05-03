@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import fr.depp.drawme.databinding.WaitingRoomItemBinding;
-import fr.depp.drawme.models.User;
+import fr.depp.drawme.models.Player;
 
 public class WaitingRoomViewHolder extends RecyclerView.ViewHolder {
 
@@ -15,7 +15,7 @@ public class WaitingRoomViewHolder extends RecyclerView.ViewHolder {
         this.binding = binding;
     }
 
-    public void display(User user) {
-        binding.textViewUsername.setText(user.getUsername());
+    public void display(Player player) {
+        binding.textViewUsername.setText(player.getUsername());
     }
 }
