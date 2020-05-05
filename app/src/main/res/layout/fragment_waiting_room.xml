@@ -40,7 +40,7 @@
 
     <Button
         android:id="@+id/btn_leave"
-        style="@style/cancelButton"
+        style="@style/btn_cancel"
         android:text="@string/exit_game"
          />
 

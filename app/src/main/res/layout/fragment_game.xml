@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView_guess_words"
+    <TextSwitcher
+        android:id="@+id/textSwitcher_guess_words"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.1"
-        android:textAlignment="center"/>
+        android:layout_weight="0.1">
+        <TextView style="@style/textView_guessed_word" />
+        <TextView style="@style/textView_guessed_word"/>
+    </TextSwitcher>
 
     <fr.depp.drawme.ui.customViews.DrawingCanvas
         android:id="@+id/drawingCanvas"
@@ -28,10 +30,11 @@
         android:layout_weight="0.2" />
 
     <EditText
-        android:layout_width="match_parent"
+        android:id="@+id/input_guessed_word"
+        style="@style/textView_guessed_word"
+        android:visibility="gone"
         android:layout_height="0dp"
         android:layout_weight="0.2"
-        android:visibility="gone"
         android:hint="@string/input_guessed_word"
         android:importantForAutofill="no"
         android:inputType="textAutoComplete|textAutoCorrect" />

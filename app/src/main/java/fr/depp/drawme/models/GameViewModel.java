@@ -5,11 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 public class GameViewModel extends ViewModel {
 
-    private final String gameName;
-    private final String playerName;
+    public GameViewModel() {
 
-    public GameViewModel(String gameName, String playerName) {
-        this.gameName = gameName;
-        this.playerName = playerName;
     }
 }

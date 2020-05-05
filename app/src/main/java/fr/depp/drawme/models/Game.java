@@ -2,8 +2,7 @@ package fr.depp.drawme.models;
 
 
 import android.content.Context;
-
-
+import android.util.Log;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -14,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import fr.depp.drawme.ui.customViews.DrawingCanvas;
+import fr.depp.drawme.utils.WordsToGuess;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 
 public class Game {
@@ -23,21 +24,25 @@ public class Game {
     private String name;
     private ListenerRegistration firebaseRegistration;
     private String localPlayerName;
+    private String wordToGuess;
+    private String currentPlayer;
     public final PublishSubject<Boolean> hasGameStartedSubject;
+    public final PublishSubject<InGameInfoWrapper> inGameInfoSubject;
     final PublishSubject<List<Player>> playersSubject;
 
     private static final int MAX_USERS = 6;
     private static final Game instance = new Game();
 
 
-    public Game() {
+    private Game() {
         players = new ArrayList<>(MAX_USERS);
         hasGameStartedSubject = PublishSubject.create();
         playersSubject = PublishSubject.create();
+        inGameInfoSubject = PublishSubject.create();
     }
 
     public boolean isAdmin() {
-        return players.get(players.size() - 1).getUsername().equals(localPlayerName);
+        return players.get(0).getUsername().equals(localPlayerName);
     }
 
     public static synchronized Game getInstance() {
@@ -50,6 +55,13 @@ public class Game {
         }
     }
 
+    void init(String gameName, String localPlayerName) {
+        this.name = gameName;
+        this.localPlayerName = localPlayerName;
+        this.firebaseRegistration = GameRepository.listenerForGameChange();
+        addPlayer(new Player(localPlayerName));
+    }
+
     public void createGame(Context context, String name, OnCustomEventListener<String> callback) {
         GameRepository.createGame(context, name, callback);
     }
@@ -59,7 +71,8 @@ public class Game {
     }
 
     public void startGame(String firstPlayerName, OnCustomEventListener<String> callback) {
-        GameRepository.startGame(firstPlayerName, callback);
+        wordToGuess = WordsToGuess.getRandomWord();
+        GameRepository.startGame(firstPlayerName, wordToGuess, callback);
     }
 
     void addPlayer(Player player) {
@@ -124,8 +137,29 @@ public class Game {
 
                 players = GameRepository.deserializePlayersFromFirebaseToList(data);
                 playersSubject.onNext(players);
+
+
+                String currentPlayer = data.getString("currentPlayer");
+                if (currentPlayer != null) {
+                    this.currentPlayer = currentPlayer;
+                    wordToGuess = data.getString("wordToGuess");
+                    String lastGuessedWord = data.getString("lastGuessedWord");
+                    if (lastGuessedWord == null) lastGuessedWord = "";
+                    DrawingCanvas.ColoredPath lastPath = GameRepository.deserializeColoredPathFromFirebase(data);
+
+                    InGameInfoWrapper gameInfo = new InGameInfoWrapper(currentPlayer, wordToGuess, lastGuessedWord, lastPath);
+                    inGameInfoSubject.onNext(gameInfo);
+                }
             }
         };
+    }
+
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public String getWordToGuess() {
+        return wordToGuess;
     }
 
     public void removeLocalPlayer() {
@@ -136,6 +170,49 @@ public class Game {
         GamePojo gamePojo = new GamePojo();
         players.forEach(player -> gamePojo.players.put(player.getUsername(), player.getScore()));
         return gamePojo;
+    }
+
+    public void updateDrawing(DrawingCanvas.ColoredPath currentPath) {
+        GameRepository.updateDrawing(currentPath);
+    }
+
+    public void updateGuessedWord(String word) {
+        if (isWordMatchingSecretWord(word)) {
+            String newWordToGuess = WordsToGuess.getRandomWord();
+            GameRepository.newTurn(localPlayerName, newWordToGuess, localPlayerName + " : " + wordToGuess);
+            wordToGuess = newWordToGuess;
+        }
+        else {
+            GameRepository.updateLastGuessedWord(localPlayerName + " : " + word);
+        }
+    }
+
+    // compare strings with up to one fault
+    private boolean isWordMatchingSecretWord(String word) {
+        if (Math.abs(word.length() - wordToGuess.length()) > 1) return false;
+
+        char[] longestWord, smallestWord;
+
+        if (word.length() > wordToGuess.length()) {
+            longestWord = word.toCharArray();
+            smallestWord = wordToGuess.toCharArray();
+        }
+        else {
+            longestWord = wordToGuess.toCharArray();
+            smallestWord = word.toCharArray();
+        }
+
+        int faults = 0;
+
+        for (int i = 0; i < smallestWord.length; i++) {
+            if (Character.toLowerCase(smallestWord[i]) != Character.toLowerCase(longestWord[i])) faults++;
+        }
+
+
+        Log.e("TAG", "isWordMatchingSecretWord: " + wordToGuess );
+        Log.e("TAG", "isWordMatchingSecretWord: "+ word );
+        Log.e("TAG", "isWordMatchingSecretWord: " + faults );
+        return faults < 2;
     }
 
     public static class GamePojo {

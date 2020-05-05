@@ -1,6 +1,5 @@
 package fr.depp.drawme.models;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 

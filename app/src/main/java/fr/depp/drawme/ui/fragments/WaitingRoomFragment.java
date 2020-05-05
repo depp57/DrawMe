@@ -66,7 +66,9 @@ public class WaitingRoomFragment extends Fragment {
 
     private void onStartGame() {
         Game game = Game.getInstance();
-        if (game.isAdmin()) {
+        boolean isGameAdmin = game.isAdmin();
+
+        if (isGameAdmin && game.getPlayers().size() > 1) {
             Game.getInstance().startGame(game.getLocalPlayerName(), new OnCustomEventListener<String>() {
                 @Override
                 public void onSuccess(@javax.annotation.Nullable String success) {}
@@ -77,14 +79,18 @@ public class WaitingRoomFragment extends Fragment {
                 }
             });
         }
-        else {
+        else if (!isGameAdmin){
             Toasty.info(requireContext(), "Vous devez être le créateur de la partie pour la lancer").show();
+        }
+        else {
+            Toasty.info(requireContext(), "Au moins 2 joueurs sont nécessaires pour lancer la partie").show();
         }
     }
 
     private void startGame() {
         Toasty.success(requireContext(), "La partie commence !").show();
         FragmentHelper.displayFragment(getParentFragmentManager(), new GameFragment());
+        hasGameStartedSubscription.dispose();
     }
 
     private void initRecyclerView() {

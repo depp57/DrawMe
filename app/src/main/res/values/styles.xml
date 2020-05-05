@@ -11,7 +11,7 @@
         <item name="android:windowBackground">@color/background_color</item>
     </style>
     
-    <style name="cancelButton" parent="@style/Widget.AppCompat.Button.Colored">
+    <style name="btn_cancel" parent="@style/Widget.AppCompat.Button.Colored">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">16dp</item>
@@ -19,5 +19,13 @@
         <item name="layout_constraintBottom_toBottomOf">parent</item>
         <item name="layout_constraintEnd_toEndOf">parent</item>
         <item name="layout_constraintStart_toStartOf">parent</item>
+    </style>
+
+    <style name="textView_guessed_word">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/text_main_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
 </resources>

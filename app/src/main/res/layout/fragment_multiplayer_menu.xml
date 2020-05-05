@@ -56,7 +56,7 @@
 
     <Button
         android:id="@+id/btn_cancel"
-        style="@style/cancelButton" />
+        style="@style/btn_cancel" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
