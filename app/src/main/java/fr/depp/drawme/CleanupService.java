@@ -21,7 +21,7 @@ public class CleanupService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Game.getInstance().removeLocalPlayer();
+        Game.getInstance().destroyGame();
         stopSelf();
     }
 }

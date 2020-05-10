@@ -6,29 +6,32 @@ import android.util.Log;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.ListenerRegistration;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import fr.depp.drawme.ui.customViews.DrawingCanvas;
-import fr.depp.drawme.utils.WordsToGuess;
+import fr.depp.drawme.utils.Dictionary;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 
 public class Game {
 
     private ArrayList<Player> players;
-
     private String name;
-    private ListenerRegistration firebaseRegistration;
     private String localPlayerName;
     private String wordToGuess;
     private String currentPlayer;
-    public final PublishSubject<Boolean> hasGameStartedSubject;
+    private String endMessage;
+    private boolean started;
+    private boolean isGameAdmin;
+    private ListenerRegistration firebaseRegistration;
+
+
+    public final PublishSubject<Boolean> gameUpdatedSubject;
     public final PublishSubject<InGameInfoWrapper> inGameInfoSubject;
-    final PublishSubject<List<Player>> playersSubject;
 
     private static final int MAX_USERS = 6;
     private static final Game instance = new Game();
@@ -36,13 +39,16 @@ public class Game {
 
     private Game() {
         players = new ArrayList<>(MAX_USERS);
-        hasGameStartedSubject = PublishSubject.create();
-        playersSubject = PublishSubject.create();
+        gameUpdatedSubject = PublishSubject.create();
         inGameInfoSubject = PublishSubject.create();
     }
 
     public boolean isAdmin() {
-        return players.get(0).getUsername().equals(localPlayerName);
+        return isGameAdmin;
+    }
+
+    public boolean isCurrentPlayer() {
+        return currentPlayer.equals(localPlayerName);
     }
 
     public static synchronized Game getInstance() {
@@ -64,18 +70,22 @@ public class Game {
 
     public void createGame(Context context, String name, OnCustomEventListener<String> callback) {
         GameRepository.createGame(context, name, callback);
+        Dictionary.setAssetManager(context);
+        isGameAdmin = true;
     }
 
     public void joinGame(Context context, String name, OnCustomEventListener<String> callback) {
         GameRepository.joinGame(context, name, callback);
+        Dictionary.setAssetManager(context);
+        isGameAdmin = false;
     }
 
     public void startGame(String firstPlayerName, OnCustomEventListener<String> callback) {
-        wordToGuess = WordsToGuess.getRandomWord();
+        wordToGuess = Dictionary.getRandomWord();
         GameRepository.startGame(firstPlayerName, wordToGuess, callback);
     }
 
-    void addPlayer(Player player) {
+    private void addPlayer(Player player) {
         if (this.players.size() < MAX_USERS) {
             this.players.add(player);
         }
@@ -93,10 +103,6 @@ public class Game {
         this.name = name;
     }
 
-    public void setLocalPlayerName(String name) {
-        localPlayerName = name;
-    }
-
     public String getLocalPlayerName() {
         return localPlayerName;
     }
@@ -105,42 +111,51 @@ public class Game {
         return players;
     }
 
-    public void setPlayers(ArrayList<Player> players) {
+    void setPlayers(ArrayList<Player> players) {
         this.players = players;
     }
 
-    void setFirebaseRegistration(ListenerRegistration listenerRegistration) {
-        firebaseRegistration = listenerRegistration;
+    public void destroyGame() {
+        destroyGame(null);
     }
 
-    public void destroyGame() {
+    public void destroyGame(String endMessage) {
+        Log.e("TAG", "destroyGame: " + this);
+        removeLocalPlayer();
         name = null;
+        localPlayerName = null;
+        currentPlayer = null;
+        wordToGuess = null;
+        this.endMessage = endMessage;
+        isGameAdmin = false;
+        started = false;
         players.clear();
         firebaseRegistration.remove();
     }
 
-    @Exclude
-    public boolean isFull() {
+    boolean isFull() {
         return players.size() == MAX_USERS;
     }
 
-    public EventListener<DocumentSnapshot> getFirebaseListener() {
+    EventListener<DocumentSnapshot> getFirebaseListener() {
         return (data, error) -> {
             if (error != null) {
                 return;
             }
 
             if (data != null && data.exists()) {
-                if (data.get("started") != null) {
-                    hasGameStartedSubject.onNext(true);
-                }
-
                 players = GameRepository.deserializePlayersFromFirebaseToList(data);
-                playersSubject.onNext(players);
-
+                Log.e("TAG", "getFirebaseListener: " + this );
+                // check if there is only one player left
+                if (started && players.size() == 1) {
+                    destroyGame("Tous les joueurs ont quitté la partie");
+                    inGameInfoSubject.onNext(InGameInfoWrapper.onDestroyGame());
+                    return;
+                }
 
                 String currentPlayer = data.getString("currentPlayer");
                 if (currentPlayer != null) {
+                    started = true;
                     this.currentPlayer = currentPlayer;
                     wordToGuess = data.getString("wordToGuess");
                     String lastGuessedWord = data.getString("lastGuessedWord");
@@ -151,11 +166,17 @@ public class Game {
                     inGameInfoSubject.onNext(gameInfo);
                 }
             }
+
+            gameUpdatedSubject.onNext(started);
         };
     }
 
     public String getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public String getEndMessage() {
+        return endMessage;
     }
 
     public String getWordToGuess() {
@@ -177,42 +198,32 @@ public class Game {
     }
 
     public void updateGuessedWord(String word) {
-        if (isWordMatchingSecretWord(word)) {
-            String newWordToGuess = WordsToGuess.getRandomWord();
+        if (Dictionary.isEquals(wordToGuess, word)) {
+            String newWordToGuess = Dictionary.getRandomWord();
             GameRepository.newTurn(localPlayerName, newWordToGuess, localPlayerName + " : " + wordToGuess);
             wordToGuess = newWordToGuess;
-        }
-        else {
+        } else {
             GameRepository.updateLastGuessedWord(localPlayerName + " : " + word);
         }
     }
 
-    // compare strings with up to one fault
-    private boolean isWordMatchingSecretWord(String word) {
-        if (Math.abs(word.length() - wordToGuess.length()) > 1) return false;
-
-        char[] longestWord, smallestWord;
-
-        if (word.length() > wordToGuess.length()) {
-            longestWord = word.toCharArray();
-            smallestWord = wordToGuess.toCharArray();
-        }
-        else {
-            longestWord = wordToGuess.toCharArray();
-            smallestWord = word.toCharArray();
-        }
-
-        int faults = 0;
-
-        for (int i = 0; i < smallestWord.length; i++) {
-            if (Character.toLowerCase(smallestWord[i]) != Character.toLowerCase(longestWord[i])) faults++;
-        }
-
-
-        Log.e("TAG", "isWordMatchingSecretWord: " + wordToGuess );
-        Log.e("TAG", "isWordMatchingSecretWord: "+ word );
-        Log.e("TAG", "isWordMatchingSecretWord: " + faults );
-        return faults < 2;
+    @NotNull
+    @Override
+    public String toString() {
+        // for debug purpose
+        return "Game{" +
+                "players=" + players +
+                ", name='" + name + '\'' +
+                ", localPlayerName='" + localPlayerName + '\'' +
+                ", wordToGuess='" + wordToGuess + '\'' +
+                ", currentPlayer='" + currentPlayer + '\'' +
+                ", endMessage='" + endMessage + '\'' +
+                ", started=" + started +
+                ", isGameAdmin=" + isGameAdmin +
+                ", firebaseRegistration=" + firebaseRegistration +
+                ", gameUpdatedSubject=" + gameUpdatedSubject +
+                ", inGameInfoSubject=" + inGameInfoSubject +
+                '}';
     }
 
     public static class GamePojo {

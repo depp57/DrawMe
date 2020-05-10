@@ -8,4 +8,11 @@
         android:title="@string/cancel"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/action_game_info"
+        android:icon="@drawable/game_controller_white_24dp"
+        android:title="@string/game_info"
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
+
 </menu>

@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.1">
-        <TextView style="@style/textView_guessed_word" />
-        <TextView style="@style/textView_guessed_word"/>
+        <TextView style="@style/textView_important" />
+        <TextView style="@style/textView_important"/>
     </TextSwitcher>
 
     <fr.depp.drawme.ui.customViews.DrawingCanvas
@@ -31,7 +31,7 @@
 
     <EditText
         android:id="@+id/input_guessed_word"
-        style="@style/textView_guessed_word"
+        style="@style/textView_important"
         android:visibility="gone"
         android:layout_height="0dp"
         android:layout_weight="0.2"

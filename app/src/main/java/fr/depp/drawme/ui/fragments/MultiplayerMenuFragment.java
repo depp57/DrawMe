@@ -62,8 +62,7 @@ public class MultiplayerMenuFragment extends Fragment {
 
             if (create_or_join.equals("create")) game.createGame(getContext(), gameName, callback);
             else game.joinGame(getContext(), gameName, callback);
-        }
-        else {
+        } else {
             Toasty.info(requireContext(), "Le nom du serveur doit être renseigné", Toast.LENGTH_SHORT).show();
         }
     }

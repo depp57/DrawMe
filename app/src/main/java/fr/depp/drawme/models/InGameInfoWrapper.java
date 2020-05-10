@@ -15,10 +15,14 @@ public class InGameInfoWrapper {
         this.lastGuessedWord = lastGuessedWord;
     }
 
-    public InGameInfoWrapper(String currentPlayer, String wordToGuess, String lastGuessedWord, DrawingCanvas.ColoredPath lastPath) {
+    InGameInfoWrapper(String currentPlayer, String wordToGuess, String lastGuessedWord, DrawingCanvas.ColoredPath lastPath) {
         this(currentPlayer, wordToGuess, lastGuessedWord);
         this.lastPath = lastPath;
     }
+
+    private InGameInfoWrapper() {}
+
+    static InGameInfoWrapper onDestroyGame() {return new InGameInfoWrapper();}
 
     public String getCurrentPlayer() {
         return currentPlayer;

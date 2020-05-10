@@ -1,6 +1,7 @@
 package fr.depp.drawme.models;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -95,6 +96,7 @@ abstract class GameRepository {
     }
 
     static void removePlayer(String playerName) {
+        Log.e("TAG", "removePlayer: " + playerName );
         DocumentReference docRef = getGamesReference().document(Game.getInstance().getName());
         docRef.update("players." + playerName, FieldValue.delete());
     }
@@ -142,7 +144,7 @@ abstract class GameRepository {
                 return players;
             }
             else {
-                throw new Exception("La partie ne devrait pas être vide");
+                throw new Exception("The game shouldn't be empty");
             }
         }
         catch (Exception e) {
@@ -153,9 +155,8 @@ abstract class GameRepository {
 
     static void newTurn(String currentPlayer, String wordToGuess, String lastGuessedWord) {
         DocumentReference docRef = getGamesReference().document(Game.getInstance().getName());
-        docRef.update("currentPlayer", currentPlayer, "lastPathDrawn", FieldValue.delete(), "wordToGuess", wordToGuess, "lastGuessedWord", lastGuessedWord);
-
-        //TODO update currentPlayer Score !!!!!!!!!!!!!!
+        docRef.update("currentPlayer", currentPlayer, "lastPathDrawn", FieldValue.delete(), "wordToGuess", wordToGuess, "lastGuessedWord", lastGuessedWord,
+        "players." + currentPlayer, FieldValue.increment(1));
     }
 
     static void updateLastGuessedWord(String lastGuessedWord) {
