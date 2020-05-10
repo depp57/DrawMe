@@ -21,11 +21,16 @@
         <item name="layout_constraintStart_toStartOf">parent</item>
     </style>
 
-    <style name="textView_guessed_word">
+    <style name="textView_important">
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/text_main_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="dialog_animation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_right</item>
     </style>
 </resources>
