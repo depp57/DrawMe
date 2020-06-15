@@ -2,7 +2,6 @@ package fr.depp.drawme.models;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -119,8 +118,7 @@ public class Game {
         destroyGame(null);
     }
 
-    public void destroyGame(String endMessage) {
-        Log.e("TAG", "destroyGame: " + this);
+    private void destroyGame(String endMessage) {
         removeLocalPlayer();
         name = null;
         localPlayerName = null;
@@ -145,7 +143,6 @@ public class Game {
 
             if (data != null && data.exists()) {
                 players = GameRepository.deserializePlayersFromFirebaseToList(data);
-                Log.e("TAG", "getFirebaseListener: " + this );
                 // check if there is only one player left
                 if (started && players.size() == 1) {
                     destroyGame("Tous les joueurs ont quitté la partie");

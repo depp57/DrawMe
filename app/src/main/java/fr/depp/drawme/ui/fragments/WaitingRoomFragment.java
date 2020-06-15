@@ -3,7 +3,6 @@ package fr.depp.drawme.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -97,7 +96,6 @@ public class WaitingRoomFragment extends Fragment implements OnBackPressed {
         Toasty.success(requireContext(), "La partie commence !").show();
         FragmentHelper.displayFragment(getParentFragmentManager(), new GameFragment(), false);
         hasGameStartedSubscription.dispose();
-        Log.e("TAG", "startGame: " + Game.getInstance());
     }
 
     private void initRecyclerView() {

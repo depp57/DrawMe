@@ -2,7 +2,6 @@ package fr.depp.drawme.ui.fragments;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -84,7 +83,6 @@ public class GameFragment extends Fragment implements OnBackPressed {
 
     @Override
     public void onDestroyView() {
-        Log.e("GameFragment", "onDestroyView: " );
         super.onDestroyView();
         gameInfoSubscriber.dispose();
     }
@@ -108,8 +106,7 @@ public class GameFragment extends Fragment implements OnBackPressed {
                 binding.colorPicker.setVisibility(View.VISIBLE);
                 binding.inputGuessedWord.setVisibility(View.GONE);
                 binding.drawingCanvas.setCanDraw(true);
-            }
-            else {
+            } else {
                 binding.colorPicker.setVisibility(View.GONE);
                 binding.inputGuessedWord.setVisibility(View.VISIBLE);
                 binding.drawingCanvas.setCanDraw(false);
@@ -141,8 +138,6 @@ public class GameFragment extends Fragment implements OnBackPressed {
     public void onDestroy() {
         // remove the player from the game in the database
         Game.getInstance().destroyGame();
-        Log.e("GameFragment", "onDestroy: ");
-
         super.onDestroy();
     }
 
